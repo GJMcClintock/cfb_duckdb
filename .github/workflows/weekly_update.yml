@@ -6,7 +6,7 @@ on:
     - cron: '0 8 * * *'
 
 env:
-    CFBD_API_KEY: {{ secrets.CFBD_API_KEY }}
+    CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
 
 jobs:
   run_daily:
