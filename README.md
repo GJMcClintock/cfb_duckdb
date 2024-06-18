@@ -11,7 +11,7 @@ The data in this repo is sourced from [collegefootballdata.com](https://collegef
 
 To get started, clone this repo and in a virtual environment run `pip install requirements.txt`.
 
-You will also need to create a file called `settings.py` in the root of your cloned repo and add `API_KEY='YOUR_KEY_HERE'` as the contents of the file. If you are running a GitHub Action on your clone, add a repository secret named `CFBD_API_KEY` and the existing action config file will create the `settings.py` file at run time.
+You will also need to create a file called `settings.py` in the root of your cloned repo and add `API_KEY='Bearer <YOUR_KEY_HERE>'` as the contents of the file. If you are running a GitHub Action on your clone, add a repository secret named `CFBD_API_KEY` and the existing action config file will create the `settings.py` file at run time.
 
 ## Usage
 

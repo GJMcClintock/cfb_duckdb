@@ -1,0 +1,34 @@
+name: CFB DuckDB Backfill
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'
+
+env:
+    CFBD_API_KEY: {{ secrets.CFBD_API_KEY }}
+
+jobs:
+  run_daily:
+    name: Run Daily Refresh
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+    steps:
+      - uses: 'actions/checkout@master'
+      - name: Checkout
+
+      - name: Setup
+        run: pip install requirements.txt
+
+      - name: Settings
+        run: 'echo "$CFBD_API_KEY" > settings.py'
+        shell: bash
+      
+      - name: Run update
+        run: python cfb_data.py backfill
+      
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Commit DuckDB File Back
