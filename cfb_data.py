@@ -330,9 +330,10 @@ def ppa_game_player():
                 'week': r.get('week')
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
-            for g in game:
-                g['season_type'] = r.get('season_type')
-            yield game
+            if len(g) > 1:
+                for g in game:
+                    g['season_type'] = r.get('season_type')
+                yield game
 
 @dlt.resource(write_disposition='merge',primary_key=('id','team'))
 def game_team_stats_advanced():
@@ -392,13 +393,13 @@ def rankings():
 
 @dlt.source
 def cfbd():
-    # return[calendar,recruiting_teams,recruiting_players,ppa_player_season,
-    #        ppa_teams,ratings_elo,ratings_srs, ratings_sp,season_stats_advanced,season_stats,
-    #        player_season_stats, records,fbs_teams,roster,games,game_media,
-    #        ratings_fpi,drives,lines,plays,rankings,ppa_game_team,ppa_game_player,
-    #        game_player_stats, game_team_stats, game_team_stats_advanced
-    #        ]
-    return[plays,rankings,ppa_game_team,ppa_game_player]
+    return[calendar,recruiting_teams,recruiting_players,ppa_player_season,
+           ppa_teams,ratings_elo,ratings_srs, ratings_sp,season_stats_advanced,season_stats,
+           player_season_stats, records,fbs_teams,roster,games,game_media,
+           ratings_fpi,drives,lines,plays,rankings,ppa_game_team,ppa_game_player,
+           game_player_stats, game_team_stats, game_team_stats_advanced
+           ]
+
     
 pipeline = dlt.pipeline(
     pipeline_name='cfbd',
