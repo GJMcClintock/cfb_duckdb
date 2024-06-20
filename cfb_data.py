@@ -33,6 +33,7 @@ def generate_seasons(start_year=1869, backfill=False):
 # Example usage
 seasons = generate_seasons(backfill=backfill)
 secondary_seasons = generate_seasons(start_year=2002,backfill=backfill)
+season_types = ['regular','postseason']
 
 @dlt.resource(write_disposition='merge',primary_key=('season','week','season_type'))
 def calendar():
@@ -136,7 +137,6 @@ def ratings_fpi():
             r['season'] = r.pop('year')
         yield response
 
-
 @dlt.resource(write_disposition='merge',primary_key=('season','team'))
 def ppa_teams():
     for season in seasons:
@@ -208,7 +208,7 @@ def roster():
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def games():
     for season in seasons:
-        for season_type in ['regular','postseason']:
+        for season_type in season_types:
             endpoint_url = url + 'games'
             params = {
                 'year' : season,
@@ -220,7 +220,7 @@ def games():
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def game_media():
     for season in seasons:
-        for season_type in ['regular','postseason']:
+        for season_type in season_types:
             endpoint_url = url + 'games/media'
             params = {
                 'year' : season,
@@ -244,36 +244,24 @@ def drives():
 
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def game_player_stats():
-    for season in seasons:
-        endpoint_url = url + 'calendar'
-        params = {
-            'year': season
-        }
-        response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
+    for season in secondary_seasons:
+        for season_type in season_types:
             endpoint_url = url + 'games/players'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
             yield game
 
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def game_team_stats():
-    for season in seasons:
-        endpoint_url = url + 'calendar'
-        params = {
-            'year': season
-        }
-        response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
+    for season in secondary_seasons:
+        for season_type in season_types:
             endpoint_url = url + 'games/teams'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
             yield game
@@ -281,35 +269,23 @@ def game_team_stats():
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def lines():
     for season in secondary_seasons:
-        endpoint_url = url + 'calendar'
-        params = {
-            'year': season
-        }
-        response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
+        for season_type in season_types:
             endpoint_url = url + 'lines'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type
             }
-            game = requests.get(endpoint_url,params=params,headers=headers).json()
-            yield game
+            lines = requests.get(endpoint_url,params=params,headers=headers).json()
+            yield lines
 
 @dlt.resource(write_disposition='merge',primary_key=('id','team'))
 def ppa_game_team():
     for season in secondary_seasons:
-        endpoint_url = url + 'calendar'
-        params = {
-            'year': season
-        }
-        response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
+        for season_type in season_types:
             endpoint_url = url + 'ppa/games'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
             yield game
@@ -324,33 +300,26 @@ def ppa_game_player():
         response = requests.get(endpoint_url,params=params,headers=headers).json()
         for r in response:
             endpoint_url = url + 'ppa/players/games'
+            season_type = r.get('seasonType')
+            week = r.get('week')
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type,
+                'week': week
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
-            for g in game:
-                g['season_type'] = r.get('season_type')
             yield game
 
 @dlt.resource(write_disposition='merge',primary_key=('id','team'))
 def game_team_stats_advanced():
     for season in secondary_seasons:
-        endpoint_url = url + 'calendar'
+        endpoint_url = url + 'stats/game/advanced'
         params = {
-            'year': season
+            'year': season,
+            'seasonType': 'both'
         }
         response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
-            endpoint_url = url + 'stats/game/advanced'
-            params = {
-                'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
-            }
-            game = requests.get(endpoint_url,params=params,headers=headers).json()
-            yield game
+        yield response
 
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def plays():
@@ -373,33 +342,25 @@ def plays():
 @dlt.resource(write_disposition='merge',primary_key=('season','week','season_type'))
 def rankings():
     for season in seasons:
-        endpoint_url = url + 'calendar'
-        params = {
-            'year': season
-        }
-        response = requests.get(endpoint_url,params=params,headers=headers).json()
-        for r in response:
+        for season_type in season_types:
             endpoint_url = url + 'rankings'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
-                'week': r.get('week')
+                'seasonType': season_type
             }
-            game = requests.get(endpoint_url,params=params,headers=headers).json()
-            yield game
+            poll = requests.get(endpoint_url,params=params,headers=headers).json()
+            yield poll
 
 # %%
 
 @dlt.source
 def cfbd():
-    # return[calendar,recruiting_teams,recruiting_players,ppa_player_season,
-    #        ppa_teams,ratings_elo,ratings_srs, ratings_sp,season_stats_advanced,season_stats,
-    #        player_season_stats, records,fbs_teams,roster,games,game_media,
-    #        ratings_fpi,drives,lines,plays,rankings,ppa_game_team,ppa_game_player,
-    #        game_player_stats, game_team_stats, game_team_stats_advanced
-    #        ]
-
-    return[calendar,ppa_game_player, game_player_stats, game_team_stats, game_team_stats_advanced]
+    return[calendar,recruiting_teams,recruiting_players,ppa_player_season,
+           ppa_teams,ratings_elo,ratings_srs, ratings_sp,season_stats_advanced,season_stats,
+           player_season_stats, records,fbs_teams,roster,games,game_media,
+           ratings_fpi,drives,lines,plays,rankings,ppa_game_team,ppa_game_player,
+           game_player_stats, game_team_stats, game_team_stats_advanced
+           ]
     
 pipeline = dlt.pipeline(
     pipeline_name='cfbd',
