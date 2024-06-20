@@ -355,11 +355,29 @@ def rankings():
 
 @dlt.source
 def cfbd():
-    return[calendar,recruiting_teams,recruiting_players,ppa_player_season,
-           ppa_teams,ratings_elo,ratings_srs, ratings_sp,season_stats_advanced,season_stats,
-           player_season_stats, records,fbs_teams,roster,games,game_media,
-           ratings_fpi,drives,lines,plays,rankings,ppa_game_team,ppa_game_player,
-           game_player_stats, game_team_stats, game_team_stats_advanced
+    return[calendar,
+           recruiting_teams,
+           recruiting_players,
+           ppa_player_season,
+           ppa_teams,
+           ratings_elo,
+           ratings_srs, 
+           ratings_sp,
+           season_stats_advanced,
+           season_stats,
+           records,
+           fbs_teams,
+           roster,
+           games,game_media,
+           ratings_fpi,drives,
+           lines,
+           plays,
+           rankings,
+           ppa_game_team,
+           ppa_game_player,
+           game_player_stats, 
+           game_team_stats, 
+           game_team_stats_advanced
            ]
     
 pipeline = dlt.pipeline(
