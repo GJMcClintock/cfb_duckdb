@@ -59,7 +59,7 @@ def records():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','player_id','category','stat_type'))
 def player_season_stats():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'stats/player/season'
         params = {
             'year' : season
@@ -71,7 +71,7 @@ def player_season_stats():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','team','stat_name'))
 def season_stats():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'stats/season'
         params = {
             'year' : season
@@ -81,7 +81,7 @@ def season_stats():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','team'))
 def season_stats_advanced():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'stats/season/advanced'
         params = {
             'year' : season
@@ -127,7 +127,7 @@ def ratings_elo():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','team'))
 def ratings_fpi():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'ratings/fpi'
         params = {
             'year' : season
@@ -139,7 +139,7 @@ def ratings_fpi():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','team'))
 def ppa_teams():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'ppa/teams'
         params = {
             'year' : season
@@ -149,7 +149,7 @@ def ppa_teams():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','id'))
 def ppa_player_season():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'ppa/players/season'
         params = {
             'year' : season
@@ -159,7 +159,7 @@ def ppa_player_season():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','id'))
 def recruiting_players():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'recruiting/players'
         params = {
             'year' : season
@@ -171,7 +171,7 @@ def recruiting_players():
 
 @dlt.resource(write_disposition='merge',primary_key=('season','team'))
 def recruiting_teams():
-    for season in seasons:
+    for season in secondary_seasons:
         endpoint_url = url + 'recruiting/teams'
         params = {
             'year' : season
@@ -219,7 +219,7 @@ def games():
 
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def game_media():
-    for season in seasons:
+    for season in secondary_seasons:
         for season_type in season_types:
             endpoint_url = url + 'games/media'
             params = {
@@ -232,7 +232,7 @@ def game_media():
 
 @dlt.resource(write_disposition='merge',primary_key=('id'))
 def drives():
-    for season in seasons:
+    for season in secondary_seasons:
         for season_type in ['regular','postseason']:
             endpoint_url = url + 'drives'
             params = {
