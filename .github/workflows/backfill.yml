@@ -8,7 +8,7 @@ env:
 
 jobs:
   run_daily:
-    name: Run Daily Refresh
+    name: Run Backfill Refresh
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
