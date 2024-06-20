@@ -333,7 +333,7 @@ def plays():
             endpoint_url = url + 'plays'
             params = {
                 'year' : season,
-                'seasonType': r.get('season_type'),
+                'seasonType': r.get('seasonType'),
                 'week': r.get('week')
             }
             game = requests.get(endpoint_url,params=params,headers=headers).json()
