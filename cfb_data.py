@@ -14,8 +14,21 @@ from datetime import datetime
 
 backfill = len(sys.argv) > 1 and sys.argv[1].lower() == "backfill"
 
+if backfill and len(sys.argv) > 2:
+    start_year = int(sys.argv[2])
+else:
+    start_year = 1869
+    
 
-def generate_seasons(start_year=1869, backfill=False):
+start_year = 2014
+backfill = True
+
+if start_year >= 2002:
+    pbp_start = start_year
+else:
+    pbp_start = 2002
+    
+def generate_seasons(start_year=start_year, backfill=False):
     current_date = datetime.now()
     current_year = current_date.year
 
@@ -31,10 +44,11 @@ def generate_seasons(start_year=1869, backfill=False):
         return [end_year]
 
 # Example usage
-seasons = generate_seasons(backfill=backfill)
-secondary_seasons = generate_seasons(start_year=2002,backfill=backfill)
+seasons = generate_seasons(start_year=start_year,backfill=backfill)
+secondary_seasons = generate_seasons(start_year=pbp_start,backfill=backfill)
 season_types = ['regular','postseason']
 
+#%%
 @dlt.resource(write_disposition='merge',primary_key=('season','week','season_type'))
 def calendar():
     for season in seasons:
@@ -355,36 +369,40 @@ def rankings():
 
 @dlt.source
 def cfbd():
-    return[calendar,
-           recruiting_teams,
-           recruiting_players,
-           ppa_player_season,
-           ppa_teams,
-           ratings_elo,
-           ratings_srs, 
-           ratings_sp,
-           season_stats_advanced,
-           season_stats,
-           records,
-           fbs_teams,
-           roster,
-           games,game_media,
-           ratings_fpi,drives,
-           lines,
-           plays,
-           rankings,
-           ppa_game_team,
-           ppa_game_player,
-           game_player_stats, 
-           game_team_stats, 
-           game_team_stats_advanced
-           ]
-    
+    # return[calendar,
+    #        recruiting_teams,
+    #        recruiting_players,
+    #        ppa_player_season,
+    #        ppa_teams,
+    #        ratings_elo,
+    #        ratings_srs, 
+    #        ratings_sp,
+    #        season_stats_advanced,
+    #        season_stats,
+    #        records,
+    #        fbs_teams,
+    #        roster,
+    #        games,game_media,
+    #        ratings_fpi,drives,
+    #        lines,
+    #        plays,
+    #        rankings,
+    #        ppa_game_team,
+    #        ppa_game_player,
+    #        game_player_stats, 
+    #        game_team_stats, 
+    #        game_team_stats_advanced
+    #        ]
+   return[calendar] 
+
 pipeline = dlt.pipeline(
     pipeline_name='cfbd',
-    destination='duckdb',
-    dataset_name='ncaafb'
+    destination='filesystem',
+    dataset_name='ncaaf',
+    progress='enlighten',
+    loader_file_format="parquet"
 )
 
 load_info = pipeline.run(cfbd())
 print(load_info)
+# %%
